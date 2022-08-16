@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HotelListing.Models
 {
-    public class CreateHotelDto
+    public class CreateHotelDTO
     {
         [Required]
         [StringLength(maximumLength: 250, ErrorMessage = "Hotel Name Is Too Long ")]
@@ -21,11 +21,14 @@ namespace HotelListing.Models
         [Range(1,5)]
         public double Rating { get; set; } 
 
-        [Required]
+       // [Required]
         public int CountryId { get; set; } 
     }
 
-    public class HotelDTO : CreateCountryDTO
+    public class UpdateHotelDTO : CreateHotelDTO
+    { }
+
+    public class HotelDTO : CreateHotelDTO
     {
         public int Id { get; set; }
         public CountryDTO Country { get; set; }

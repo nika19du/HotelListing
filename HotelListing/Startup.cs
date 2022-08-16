@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
@@ -48,7 +49,11 @@ namespace HotelListing
                      .AllowAnyMethod()
                      .AllowAnyHeader());
             });
-
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Administrator", policy => policy.RequireClaim("Administrator"));
+                options.AddPolicy("User", policy => policy.RequireClaim("User"));
+            });
             services.AddAutoMapper(typeof(MapperInitializer));
 
             services.AddTransient<IUnitOfWork, UnitOfWork>();
@@ -68,6 +73,8 @@ namespace HotelListing
         {
             if (env.IsDevelopment())
             {
+                IdentityModelEventSource.ShowPII = true;
+
                 app.UseDeveloperExceptionPage();
             }
 
@@ -78,9 +85,9 @@ namespace HotelListing
 
             app.UseCors("AllowAll");
 
+            app.UseHttpsRedirection();
             app.UseRouting();
-
-            app.UseAuthentication();  
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
